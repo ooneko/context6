@@ -1,0 +1,9 @@
+{
+  "knowledgePaths": [
+    "./test-knowledge-base"
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "*.tmp.md"
+  ]
+}

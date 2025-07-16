@@ -1,0 +1,23 @@
+{
+  "knowledgePaths": [
+    "/Users/huabinhong/Code/bigcat/context7/docs"
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "*.tmp.md",
+    ".obsidian/**",
+    ".git/**",
+    "**/.DS_Store",
+    "**/drafts/**"
+  ],
+  "indexOptions": {
+    "maxFileSizeMb": 10,
+    "cacheEnabled": true,
+    "updateIntervalMs": 5000
+  },
+  "searchOptions": {
+    "maxResults": 20,
+    "contextLength": 200,
+    "defaultMode": "keyword"
+  }
+}
