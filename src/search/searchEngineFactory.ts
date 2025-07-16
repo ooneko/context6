@@ -1,6 +1,7 @@
 import type { Config, SearchMode } from "../types.js";
 import type { ISearchEngine } from "./searchEngine.js";
 import { KeywordSearchEngine } from "./keywordSearch.js";
+import { SemanticSearchEngine } from "./semanticSearch.js";
 
 export function createSearchEngine(config: Config): ISearchEngine {
   const mode = config.searchOptions.defaultMode;
@@ -10,9 +11,12 @@ export function createSearchEngine(config: Config): ISearchEngine {
       return new KeywordSearchEngine();
 
     case "semantic":
-      // TODO: Implement SemanticSearchEngine
-      // Fallback to keyword search until semantic is implemented
-      return new KeywordSearchEngine();
+      // Check if semantic search is properly configured
+      if (!config.searchOptions.semantic?.enabled) {
+        // Semantic search mode requested but not enabled, falling back to keyword search
+        return new KeywordSearchEngine();
+      }
+      return new SemanticSearchEngine(config);
 
     case "hybrid":
       // TODO: Implement HybridSearchEngine

@@ -1,7 +1,15 @@
 import { createSearchEngine, createSearchEngineForMode } from '../../src/search/searchEngineFactory.js';
 import { KeywordSearchEngine } from '../../src/search/keywordSearch.js';
+import { SemanticSearchEngine } from '../../src/search/semanticSearch.js';
 import type { Config } from '../../src/types.js';
 import { getConfig } from '../../src/config.js';
+
+// Mock the semantic search dependencies
+jest.mock('../../src/embeddings/localEmbedding.js');
+jest.mock('../../src/embeddings/openaiEmbedding.js');
+jest.mock('../../src/embeddings/cohereEmbedding.js');
+jest.mock('../../src/vectorStore/memoryVectorStore.js');
+jest.mock('../../src/vectorStore/fileVectorStore.js');
 
 describe('searchEngineFactory', () => {
   let config: Config;
@@ -17,8 +25,35 @@ describe('searchEngineFactory', () => {
       expect(engine).toBeInstanceOf(KeywordSearchEngine);
     });
 
-    it('should fallback to KeywordSearchEngine for semantic mode', () => {
+    it('should create SemanticSearchEngine when semantic is enabled', () => {
       config.searchOptions.defaultMode = 'semantic';
+      config.searchOptions.semantic = {
+        enabled: true,
+        provider: 'local',
+        model: 'test-model',
+        cacheEmbeddings: false,
+        batchSize: 100,
+      };
+      const engine = createSearchEngine(config);
+      expect(engine).toBeInstanceOf(SemanticSearchEngine);
+    });
+
+    it('should fallback to KeywordSearchEngine when semantic is disabled', () => {
+      config.searchOptions.defaultMode = 'semantic';
+      config.searchOptions.semantic = {
+        enabled: false,
+        provider: 'local',
+        model: 'test-model',
+        cacheEmbeddings: false,
+        batchSize: 100,
+      };
+      const engine = createSearchEngine(config);
+      expect(engine).toBeInstanceOf(KeywordSearchEngine);
+    });
+
+    it('should fallback to KeywordSearchEngine when semantic config is missing', () => {
+      config.searchOptions.defaultMode = 'semantic';
+      config.searchOptions.semantic = undefined;
       const engine = createSearchEngine(config);
       expect(engine).toBeInstanceOf(KeywordSearchEngine);
     });

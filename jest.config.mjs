@@ -4,7 +4,8 @@ export default {
   roots: ['<rootDir>/tests'],
   testMatch: ['**/*.test.ts'],
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1'
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '@xenova/transformers': '<rootDir>/__mocks__/@xenova/transformers.js'
   },
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
