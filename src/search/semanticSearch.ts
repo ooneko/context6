@@ -1,6 +1,12 @@
 import { BaseSearchEngine } from "./searchEngine.js";
 import type { ISearchEngine } from "./searchEngine.js";
-import type { FileInfo, Config, SearchOptions, SearchResult, MatchContext } from "../types.js";
+import type {
+  FileInfo,
+  Config,
+  SearchOptions,
+  SearchResult,
+  MatchContext,
+} from "../types.js";
 import { DocumentChunker } from "../utils/documentChunker.js";
 import type { DocumentChunk } from "../utils/documentChunker.js";
 import type { IEmbeddingProvider } from "../embeddings/embeddingProvider.js";
@@ -18,7 +24,10 @@ interface IndexedDocument {
   lastModified: Date;
 }
 
-export class SemanticSearchEngine extends BaseSearchEngine implements ISearchEngine {
+export class SemanticSearchEngine
+  extends BaseSearchEngine
+  implements ISearchEngine
+{
   private embeddingProvider: IEmbeddingProvider;
   private vectorStore: IVectorStore;
   private documentChunker: DocumentChunker;
@@ -32,10 +41,11 @@ export class SemanticSearchEngine extends BaseSearchEngine implements ISearchEng
 
     // Initialize document chunker with proper type checking
     const semanticConfig = config.searchOptions.semantic;
-    const chunkSize = semanticConfig && typeof semanticConfig.batchSize === 'number' 
-      ? semanticConfig.batchSize 
-      : 800;
-    
+    const chunkSize =
+      semanticConfig && typeof semanticConfig.batchSize === "number"
+        ? semanticConfig.batchSize
+        : 800;
+
     this.documentChunker = new DocumentChunker({
       maxChunkSize: chunkSize,
       overlapSize: 100,
@@ -156,7 +166,8 @@ export class SemanticSearchEngine extends BaseSearchEngine implements ISearchEng
 
       // Generate embeddings for each chunk
       const chunkTexts = chunks.map((chunk) => chunk.content);
-      const embeddingResult = await this.embeddingProvider.embedBatch(chunkTexts);
+      const embeddingResult =
+        await this.embeddingProvider.embedBatch(chunkTexts);
 
       // Store vectors
       const vectorEntries: VectorEntry[] = chunks.map((chunk, index) => ({
@@ -202,9 +213,12 @@ export class SemanticSearchEngine extends BaseSearchEngine implements ISearchEng
       const queryEmbedding = await this.embeddingProvider.embed(query);
 
       // Search vector store
-      const searchResults = await this.vectorStore.search(queryEmbedding.embedding, {
-        topK: limit * 2, // Get more results for filtering
-      });
+      const searchResults = await this.vectorStore.search(
+        queryEmbedding.embedding,
+        {
+          topK: limit * 2, // Get more results for filtering
+        },
+      );
 
       // Group results by file and create search results
       const fileResults = new Map<string, SearchResult>();
@@ -227,7 +241,7 @@ export class SemanticSearchEngine extends BaseSearchEngine implements ISearchEng
           };
           fileResults.set(filePath, fileResult);
         }
-        
+
         // Update score to use the highest score for this file
         if (result.score > fileResult.score) {
           fileResult.score = result.score;
@@ -259,25 +273,25 @@ export class SemanticSearchEngine extends BaseSearchEngine implements ISearchEng
   private extractMatchText(content: string, query: string): string {
     // Find the most relevant sentence or phrase
     const sentences = content.split(/[.!?]+/);
-    
+
     // Simple heuristic: find sentence with most query words
     let bestSentence = "";
     let maxMatches = 0;
-    
+
     const queryWords = query.toLowerCase().split(/\s+/);
-    
+
     for (const sentence of sentences) {
       const sentenceLower = sentence.toLowerCase();
-      const matchCount = queryWords.filter(word => 
-        sentenceLower.includes(word)
+      const matchCount = queryWords.filter((word) =>
+        sentenceLower.includes(word),
       ).length;
-      
+
       if (matchCount > maxMatches) {
         maxMatches = matchCount;
         bestSentence = sentence.trim();
       }
     }
-    
+
     return bestSentence || sentences[0]?.trim() || "";
   }
 
@@ -296,13 +310,13 @@ export class SemanticSearchEngine extends BaseSearchEngine implements ISearchEng
 
   async remove(filePath: string): Promise<void> {
     await this.initialize();
-    
+
     // Remove from vector store
     await this.removeFileVectors(filePath);
-    
+
     // Remove from indexed documents
     this.indexedDocuments.delete(filePath);
-    
+
     // Remove from files
     this.files.delete(filePath);
   }
@@ -320,7 +334,7 @@ export class SemanticSearchEngine extends BaseSearchEngine implements ISearchEng
     if (this.vectorStore instanceof FileVectorStore) {
       await this.vectorStore.persist();
     }
-    
+
     // Dispose embedding provider
     await this.embeddingProvider.dispose();
   }

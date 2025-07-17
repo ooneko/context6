@@ -52,7 +52,10 @@ export class DocumentChunker {
     options: ChunkOptions,
   ): DocumentChunk[] {
     const chunks: DocumentChunk[] = [];
-    const paragraphs = this.extractParagraphs(lines, options.preserveCodeBlocks);
+    const paragraphs = this.extractParagraphs(
+      lines,
+      options.preserveCodeBlocks,
+    );
 
     let currentChunk: string[] = [];
     let currentSize = 0;
@@ -60,7 +63,9 @@ export class DocumentChunker {
     let chunkIndex = 0;
 
     for (const paragraph of paragraphs) {
-      const paragraphSize = this.estimateTokenCount(paragraph.content.join("\n"));
+      const paragraphSize = this.estimateTokenCount(
+        paragraph.content.join("\n"),
+      );
 
       if (paragraphSize > options.maxChunkSize) {
         if (currentChunk.length > 0) {
@@ -151,7 +156,10 @@ export class DocumentChunker {
     for (let i = 0; i < lines.length; i++) {
       const lineSize = this.estimateTokenCount(lines[i]);
 
-      if (currentSize + lineSize > options.maxChunkSize && currentChunk.length > 0) {
+      if (
+        currentSize + lineSize > options.maxChunkSize &&
+        currentChunk.length > 0
+      ) {
         chunks.push(
           this.createChunk(
             currentChunk,
@@ -224,7 +232,10 @@ export class DocumentChunker {
           codeBlockDelimiter = trimmedLine;
           startLine = i;
           currentParagraph.push(line);
-        } else if (trimmedLine === codeBlockDelimiter || trimmedLine === "```") {
+        } else if (
+          trimmedLine === codeBlockDelimiter ||
+          trimmedLine === "```"
+        ) {
           currentParagraph.push(line);
           paragraphs.push({
             content: currentParagraph,
@@ -269,7 +280,11 @@ export class DocumentChunker {
     paragraph: { content: string[]; startLine: number; endLine: number },
     maxSize: number,
   ): Array<{ lines: string[]; startLine: number; endLine: number }> {
-    const chunks: Array<{ lines: string[]; startLine: number; endLine: number }> = [];
+    const chunks: Array<{
+      lines: string[];
+      startLine: number;
+      endLine: number;
+    }> = [];
     let currentChunk: string[] = [];
     let currentSize = 0;
     let chunkStartLine = paragraph.startLine;
