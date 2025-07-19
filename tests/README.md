@@ -1,6 +1,6 @@
 # Test Organization
 
-This document describes the testing strategy and organization for the Local Knowledge MCP Server project.
+This document describes the testing strategy and organization for the Context6 MCP Server project.
 
 ## Test Structure
 

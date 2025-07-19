@@ -1,11 +1,11 @@
 {
-  "name": "local-knowledge-mcp",
+  "name": "context6",
   "version": "1.0.0",
   "description": "MCP server for searching and accessing local Markdown knowledge base",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "local-knowledge-mcp": "./dist/index.js"
+    "context6": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

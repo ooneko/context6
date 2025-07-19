@@ -1,6 +1,6 @@
 # 配置知识库路径指南
 
-Local Knowledge MCP 支持多种方式配置知识库路径。
+Context6 MCP 支持多种方式配置知识库路径。
 
 ## 方法一：使用配置文件（推荐）
 
@@ -39,10 +39,10 @@ Local Knowledge MCP 支持多种方式配置知识库路径。
 ```json
 {
   "mcpServers": {
-    "local-knowledge": {
+    "context6": {
       "command": "node",
       "args": [
-        "/path/to/local-knowledge-mcp/dist/index.js",
+        "/path/to/context6-mcp/dist/index.js",
         "--config",
         "/path/to/my-knowledge.json"
       ]
@@ -60,11 +60,11 @@ Local Knowledge MCP 支持多种方式配置知识库路径。
 ```json
 {
   "mcpServers": {
-    "local-knowledge": {
+    "context6": {
       "command": "node",
-      "args": ["/path/to/local-knowledge-mcp/dist/index.js"],
+      "args": ["/path/to/context6-mcp/dist/index.js"],
       "env": {
-        "LOCAL_KNOWLEDGE_CONFIG": "{\"knowledgePaths\": [\"~/Documents/notes\", \"~/Projects/docs\"]}"
+        "CONTEXT6_CONFIG": "{\"knowledgePaths\": [\"~/Documents/notes\", \"~/Projects/docs\"]}"
       }
     }
   }
@@ -74,7 +74,7 @@ Local Knowledge MCP 支持多种方式配置知识库路径。
 ### 2. 或在系统中设置环境变量
 
 ```bash
-export LOCAL_KNOWLEDGE_CONFIG='{"knowledgePaths": ["~/Documents/notes"]}'
+export CONTEXT6_CONFIG='{"knowledgePaths": ["~/Documents/notes"]}'
 ```
 
 ## 方法三：修改默认配置
@@ -102,7 +102,7 @@ npm run build
 
 如果同时使用多种配置方法，优先级如下：
 1. 命令行参数 `--config` 指定的配置文件
-2. 环境变量 `LOCAL_KNOWLEDGE_CONFIG`
+2. 环境变量 `CONTEXT6_CONFIG`
 3. 代码中的默认配置
 
 ## 配置选项说明

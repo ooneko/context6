@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { LocalKnowledgeServer } from "./server.js";
+import { Context6Server } from "./server.js";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import type { Config } from "./types.js";
@@ -9,8 +9,8 @@ async function main(): Promise<void> {
   let config: Partial<Config> = {};
 
   // 优先检查环境变量（可以是文件路径或 JSON 内容）
-  if (process.env.LOCAL_KNOWLEDGE_CONFIG) {
-    const envValue = process.env.LOCAL_KNOWLEDGE_CONFIG;
+  if (process.env.CONTEXT6_CONFIG) {
+    const envValue = process.env.CONTEXT6_CONFIG;
 
     // 判断是文件路径还是 JSON 内容
     if (
@@ -37,7 +37,7 @@ async function main(): Promise<void> {
         config = envConfig;
         console.error("Loaded config from environment variable (JSON)");
       } catch (error) {
-        console.error("Failed to parse LOCAL_KNOWLEDGE_CONFIG as JSON:", error);
+        console.error("Failed to parse CONTEXT6_CONFIG as JSON:", error);
         process.exit(1);
       }
     }
@@ -64,7 +64,7 @@ async function main(): Promise<void> {
     }
   }
 
-  const server = new LocalKnowledgeServer(config);
+  const server = new Context6Server(config);
 
   process.on("SIGINT", () => {
     console.error("Shutting down...");

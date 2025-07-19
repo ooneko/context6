@@ -1,4 +1,4 @@
-# 本地知识库 MCP 服务器需求文档
+# Context6 MCP 服务器需求文档
 
 ## 项目概述
 
@@ -64,7 +64,7 @@
 
 ### 项目结构
 ```
-local-knowledge-mcp/
+context6-mcp/
 ├── src/
 │   ├── index.ts              # MCP 服务器主入口
 │   ├── fileService.ts        # 文件系统操作服务

@@ -1,4 +1,4 @@
-import { LocalKnowledgeServer } from "./src/server.js";
+import { Context6Server } from "./src/server.js";
 import { readFileSync } from "fs";
 import type { Config } from "./src/types.js";
 
@@ -65,7 +65,7 @@ async function runTests() {
   ];
 
   // Create server instance
-  const server = new LocalKnowledgeServer(config);
+  const server = new Context6Server(config);
   
   console.log("⏳ 等待服务器初始化和文件索引...\n");
   

@@ -31,10 +31,10 @@ jest.mock('../src/search/searchEngineFactory.js', () => ({
 }));
 
 // Import after mocking
-import { LocalKnowledgeServer } from '../src/server.js';
+import { Context6Server } from '../src/server.js';
 
-describe('LocalKnowledgeServer', () => {
-  let server: LocalKnowledgeServer;
+describe('Context6Server', () => {
+  let server: Context6Server;
   const mockConfig: Partial<Config> = {
     knowledgePaths: ['/test/path'],
     searchOptions: {
@@ -47,17 +47,17 @@ describe('LocalKnowledgeServer', () => {
   
   beforeEach(() => {
     jest.clearAllMocks();
-    server = new LocalKnowledgeServer(mockConfig);
+    server = new Context6Server(mockConfig);
   });
   
   describe('constructor', () => {
     it('should create server instance', () => {
       expect(server).toBeDefined();
-      expect(server).toBeInstanceOf(LocalKnowledgeServer);
+      expect(server).toBeInstanceOf(Context6Server);
     });
     
     it('should initialize with default config when no config provided', () => {
-      const defaultServer = new LocalKnowledgeServer();
+      const defaultServer = new Context6Server();
       expect(defaultServer).toBeDefined();
     });
     

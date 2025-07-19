@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **Local Knowledge MCP Server** - a TypeScript-based MCP (Model Context Protocol) server that enables AI assistants to search and access local Markdown knowledge bases.
+This is **Context6** - a TypeScript-based MCP (Model Context Protocol) server that enables AI assistants to search and access local Markdown knowledge bases.
 
 ## Development Commands
 
@@ -57,7 +57,7 @@ For comprehensive testing documentation, see [tests/README.md](tests/README.md)
 
 ### Data Flow
 ```
-Claude Desktop → StdioTransport → LocalKnowledgeServer → Tool Handlers
+Claude Desktop → StdioTransport → Context6Server → Tool Handlers
                                                               ↓
                                             FileService ← SearchEngine
 ```
@@ -66,7 +66,7 @@ Claude Desktop → StdioTransport → LocalKnowledgeServer → Tool Handlers
 
 1. **Configuration Loading Priority**
    - Command line `--config` flag
-   - Environment variable `LOCAL_KNOWLEDGE_CONFIG`
+   - Environment variable `CONTEXT6_CONFIG`
    - Default config from `src/config.ts`
 
 2. **Search Architecture**

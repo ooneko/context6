@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { LocalKnowledgeServer } from "./dist/server.js";
+import { Context6Server } from "./dist/server.js";
 import { getConfig } from "./dist/config.js";
 
 async function testHybridSearch() {
@@ -21,7 +21,7 @@ async function testHybridSearch() {
     },
   });
 
-  const server = new LocalKnowledgeServer(config);
+  const server = new Context6Server(config);
 
   // Initialize the server (load files)
   await server.initialize();

@@ -1,4 +1,4 @@
-# Local Knowledge MCP Server
+# Context6 MCP Server
 
 一个强大的 MCP (Model Context Protocol) 服务器，用于搜索和访问本地 Markdown 知识库。支持关键词搜索和先进的语义搜索功能。
 
@@ -191,9 +191,9 @@ npm run build
    ```json
    {
      "mcpServers": {
-       "local-knowledge": {
+       "context6": {
          "command": "node",
-         "args": ["/path/to/local-knowledge-mcp/dist/index.js"]
+         "args": ["/path/to/context6/dist/index.js"]
        }
      }
    }
@@ -379,14 +379,14 @@ npm run inspector   # 使用 MCP Inspector 调试
 
 ### 数据流架构
 ```
-Claude Desktop → StdioTransport → LocalKnowledgeServer → Tool Handlers
+Claude Desktop → StdioTransport → Context6Server → Tool Handlers
                                                               ↓
                                             FileService ← SearchEngine
 ```
 
 ### 配置加载优先级
 1. 命令行 `--config` 参数
-2. 环境变量 `LOCAL_KNOWLEDGE_CONFIG`
+2. 环境变量 `CONTEXT6_CONFIG`
 3. 默认配置 `src/config.ts`
 
 ### 文件处理特性

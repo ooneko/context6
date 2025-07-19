@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
-import { LocalKnowledgeServer } from './dist/server.js';
+import { Context6Server } from './dist/server.js';
 import { readFileSync } from 'fs';
 
 // 读取测试配置
 const testConfig = JSON.parse(readFileSync('./test-config.json', 'utf-8'));
 
-console.log('创建 Local Knowledge MCP 服务器测试...\n');
+console.log('创建 Context6 MCP 服务器测试...\n');
 
 async function testServer() {
   try {
     // 创建服务器实例
-    const server = new LocalKnowledgeServer(testConfig);
+    const server = new Context6Server(testConfig);
     
     // 初始化服务器
     console.log('1. 初始化服务器...');

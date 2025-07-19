@@ -11,7 +11,7 @@ import type { Config, FileInfo, SearchOptions } from "./types.js";
 import { getConfig } from "./config.js";
 import * as path from "path";
 
-export class LocalKnowledgeServer {
+export class Context6Server {
   private server: Server;
   private fileService: FileService;
   private searchEngine: ISearchEngine;
@@ -30,7 +30,7 @@ export class LocalKnowledgeServer {
     // Initialize server with proper typing
     const server = new Server(
       {
-        name: "local-knowledge-mcp",
+        name: "context6-mcp",
         version: "1.0.0",
       },
       {
@@ -252,7 +252,7 @@ export class LocalKnowledgeServer {
   }
 
   async initialize(): Promise<void> {
-    console.error("Initializing Local Knowledge MCP Server...");
+    console.error("Initializing Context6 MCP Server...");
 
     // Scan for files
     console.error("Scanning for markdown files...");
@@ -278,6 +278,6 @@ export class LocalKnowledgeServer {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
 
-    console.error("Local Knowledge MCP Server running on stdio");
+    console.error("Context6 MCP Server running on stdio");
   }
 }
