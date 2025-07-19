@@ -32,15 +32,13 @@ export class SemanticSearchEngine
   private vectorStore: IVectorStore;
   private documentChunker: DocumentChunker;
   private indexedDocuments = new Map<string, IndexedDocument>();
-  private config: Config;
   private isInitialized = false;
 
-  constructor(config: Config) {
+  constructor(private readonly config: Config) {
     super();
-    this.config = config;
 
     // Initialize document chunker with proper type checking
-    const semanticConfig = config.searchOptions.semantic;
+    const semanticConfig = this.config.searchOptions.semantic;
     const chunkSize =
       semanticConfig && typeof semanticConfig.batchSize === "number"
         ? semanticConfig.batchSize
@@ -54,10 +52,10 @@ export class SemanticSearchEngine
     });
 
     // Initialize embedding provider
-    this.embeddingProvider = this.createEmbeddingProvider(config);
+    this.embeddingProvider = this.createEmbeddingProvider(this.config);
 
     // Initialize vector store
-    this.vectorStore = this.createVectorStore(config);
+    this.vectorStore = this.createVectorStore(this.config);
   }
 
   private createEmbeddingProvider(config: Config): IEmbeddingProvider {
@@ -170,18 +168,31 @@ export class SemanticSearchEngine
         await this.embeddingProvider.embedBatch(chunkTexts);
 
       // Store vectors
-      const vectorEntries: VectorEntry[] = chunks.map((chunk, index) => ({
-        vector: embeddingResult.embeddings[index],
-        metadata: {
-          id: chunk.id,
-          filePath: file.path,
-          title: file.title,
-          chunkIndex: chunk.chunkIndex,
-          startLine: chunk.startLine,
-          endLine: chunk.endLine,
-          content: chunk.content,
-        },
-      }));
+      const vectorEntries: VectorEntry[] = [];
+      for (let index = 0; index < chunks.length; index++) {
+        const chunk = chunks[index];
+        const vector = embeddingResult.embeddings[index];
+        if (!vector || !chunk) {
+          console.error(
+            `Missing embedding or chunk at index ${index} in file ${file.path}`,
+          );
+          continue;
+        }
+        vectorEntries.push({
+          vector,
+          metadata: {
+            id: chunk.id,
+            path: file.path,
+            title: file.title,
+            modified: file.modified.getTime(),
+            hash: chunk.id,
+            chunkIndex: chunk.chunkIndex,
+            startLine: chunk.startLine,
+            endLine: chunk.endLine,
+            content: chunk.content,
+          },
+        });
+      }
 
       // Remove old vectors for this file
       await this.removeFileVectors(file.path);
@@ -225,7 +236,7 @@ export class SemanticSearchEngine
 
       for (const result of searchResults) {
         const metadata = result.entry.metadata;
-        const filePath = metadata.filePath as string;
+        const filePath = metadata.path;  // Changed from filePath to path
         const file = this.files.get(filePath);
 
         if (!file) {
@@ -248,11 +259,13 @@ export class SemanticSearchEngine
         }
 
         // Add match context
+        const content = metadata.content as string;
+        const matchText = this.extractMatchText(content, query);
         const matchContext: MatchContext = {
           line: metadata.startLine as number,
-          column: 0,
-          text: this.extractMatchText(metadata.content as string, query),
-          snippet: this.createSnippet(metadata.content as string),
+          text: matchText,
+          start: 0,
+          end: matchText.length,
         };
 
         fileResult.matches.push(matchContext);
@@ -262,7 +275,7 @@ export class SemanticSearchEngine
       const results = Array.from(fileResults.values())
         .sort((a, b) => b.score - a.score)
         .slice(0, limit);
-
+      
       return results;
     } catch (error) {
       console.error("Semantic search failed:", error);
@@ -295,13 +308,7 @@ export class SemanticSearchEngine
     return bestSentence || sentences[0]?.trim() || "";
   }
 
-  private createSnippet(content: string): string {
-    const maxLength = 200;
-    if (content.length <= maxLength) {
-      return content;
-    }
-    return content.substring(0, maxLength) + "...";
-  }
+  // Removed unused createSnippet method
 
   async update(file: FileInfo): Promise<void> {
     await this.initialize();

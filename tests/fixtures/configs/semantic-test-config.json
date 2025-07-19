@@ -1,0 +1,16 @@
+{
+  "knowledgePaths": [
+    "./tests/fixtures/test-knowledge-base"
+  ],
+  "searchOptions": {
+    "defaultMode": "semantic",
+    "maxResults": 10,
+    "semantic": {
+      "enabled": true,
+      "provider": "local",
+      "model": "Xenova/all-MiniLM-L6-v2",
+      "cacheEmbeddings": true,
+      "batchSize": 100
+    }
+  }
+}

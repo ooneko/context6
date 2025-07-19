@@ -1,4 +1,4 @@
-import { pipeline, type Pipeline } from "@xenova/transformers";
+import { pipeline, type PretrainedOptions } from "@xenova/transformers";
 import {
   BaseEmbeddingProvider,
   type EmbeddingResult,
@@ -14,13 +14,21 @@ interface TransformerOutput {
   size: number;
 }
 
+// Type for the feature extraction pipeline
+interface FeatureExtractionPipeline {
+  (
+    text: string,
+    options: { pooling: string; normalize: boolean },
+  ): Promise<TransformerOutput>;
+}
+
 export interface LocalEmbeddingConfig extends EmbeddingProviderConfig {
   modelPath?: string;
   cacheDir?: string;
 }
 
 export class LocalEmbeddingProvider extends BaseEmbeddingProvider {
-  private embedder: Pipeline | null = null;
+  private embedder: FeatureExtractionPipeline | null = null;
   private modelName: string;
   private dimension: number;
   private maxLength: number = 512;
@@ -30,7 +38,7 @@ export class LocalEmbeddingProvider extends BaseEmbeddingProvider {
 
   constructor(config: LocalEmbeddingConfig) {
     super(config);
-    this.modelName = config.model || "Xenova/all-MiniLM-L6-v2";
+    this.modelName = config.model || "shibing624/text2vec-base-chinese";
     this.modelPath = config.modelPath;
     this.cacheDir = config.cacheDir;
 
@@ -46,6 +54,7 @@ export class LocalEmbeddingProvider extends BaseEmbeddingProvider {
       "Xenova/all-mpnet-base-v2": 768,
       "Xenova/paraphrase-multilingual-MiniLM-L12-v2": 384,
       "Xenova/distiluse-base-multilingual-cased-v2": 512,
+      "shibing624/text2vec-base-chinese": 768,
     };
 
     return knownDimensions[modelName] || 384; // Default to 384
@@ -66,11 +75,30 @@ export class LocalEmbeddingProvider extends BaseEmbeddingProvider {
   private async doInitialize(): Promise<void> {
     try {
       // Load the feature extraction pipeline
-      this.embedder = await pipeline("feature-extraction", this.modelName, {
-        cache_dir: this.cacheDir,
-        local_files_only: !!this.modelPath,
+      const options: PretrainedOptions = {
         revision: "main",
-      });
+        progress_callback: (progress: { status?: string; progress?: number }) => {
+          if (progress.status === "downloading" && progress.progress !== undefined) {
+            console.error(`Downloading model: ${progress.progress}%`);
+          }
+        },
+      };
+      
+      // Only use cache_dir if provided
+      if (this.cacheDir) {
+        options.cache_dir = this.cacheDir;
+      }
+      
+      // Only use local_files_only if modelPath is provided
+      if (this.modelPath) {
+        options.local_files_only = true;
+      }
+      
+      this.embedder = (await pipeline(
+        "feature-extraction",
+        this.modelName,
+        options,
+      )) as FeatureExtractionPipeline;
     } catch (error) {
       throw new Error(
         `Failed to load local embedding model ${this.modelName}: ${String(error)}`,
@@ -89,10 +117,10 @@ export class LocalEmbeddingProvider extends BaseEmbeddingProvider {
 
     try {
       // Generate embeddings
-      const output = (await this.embedder(truncated, {
+      const output = await this.embedder(truncated, {
         pooling: "mean",
         normalize: true,
-      })) as TransformerOutput;
+      });
 
       // Extract the embedding array
       const embedding = Array.from(output.data);
@@ -129,13 +157,13 @@ export class LocalEmbeddingProvider extends BaseEmbeddingProvider {
 
       try {
         // Process batch
-        const embedderCopy = this.embedder;
+        const embedder = this.embedder;
         const outputs = await Promise.all(
           truncatedBatch.map(async (text) => {
-            const result = (await embedderCopy(text, {
+            const result = await embedder(text, {
               pooling: "mean",
               normalize: true,
-            })) as unknown as TransformerOutput;
+            });
             return result;
           }),
         );

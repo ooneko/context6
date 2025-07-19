@@ -154,7 +154,11 @@ export class DocumentChunker {
     let chunkIndex = 0;
 
     for (let i = 0; i < lines.length; i++) {
-      const lineSize = this.estimateTokenCount(lines[i]);
+      const line = lines[i];
+      if (line === undefined) {
+        continue;
+      }
+      const lineSize = this.estimateTokenCount(line);
 
       if (
         currentSize + lineSize > options.maxChunkSize &&
@@ -177,7 +181,7 @@ export class DocumentChunker {
         startLine = i - overlap.length;
       }
 
-      currentChunk.push(lines[i]);
+      currentChunk.push(line);
       currentSize += lineSize;
     }
 
@@ -216,6 +220,9 @@ export class DocumentChunker {
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
+      if (line === undefined) {
+        continue;
+      }
       const trimmedLine = line.trim();
 
       if (preserveCodeBlocks && trimmedLine.startsWith("```")) {
@@ -291,6 +298,9 @@ export class DocumentChunker {
 
     for (let i = 0; i < paragraph.content.length; i++) {
       const line = paragraph.content[i];
+      if (line === undefined) {
+        continue;
+      }
       const lineSize = this.estimateTokenCount(line);
 
       if (currentSize + lineSize > maxSize && currentChunk.length > 0) {
@@ -328,7 +338,11 @@ export class DocumentChunker {
     let startIndex = chunk.length - 1;
 
     for (let i = chunk.length - 1; i >= 0; i--) {
-      size += this.estimateTokenCount(chunk[i]);
+      const chunkLine = chunk[i];
+      if (chunkLine === undefined) {
+        continue;
+      }
+      size += this.estimateTokenCount(chunkLine);
       if (size >= overlapSize) {
         startIndex = i;
         break;

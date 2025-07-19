@@ -70,6 +70,11 @@ export class CohereEmbeddingProvider extends BaseEmbeddingProvider {
       // Type assertion for Cohere response
       const embeddings = response.embeddings as { float: number[][] };
       const embedding = embeddings.float[0];
+
+      if (!embedding) {
+        throw new Error("No embedding returned from Cohere API");
+      }
+
       // Cohere doesn't provide token count in response, estimate it
       const tokens = Math.ceil(text.length / 4);
 

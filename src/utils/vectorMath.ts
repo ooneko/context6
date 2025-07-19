@@ -12,7 +12,12 @@ export function dotProduct(a: number[], b: number[]): number {
 
   let sum = 0;
   for (let i = 0; i < a.length; i++) {
-    sum += a[i] * b[i];
+    const aVal = a[i];
+    const bVal = b[i];
+    if (aVal === undefined || bVal === undefined) {
+      throw new Error("Vectors contain undefined values");
+    }
+    sum += aVal * bVal;
   }
   return sum;
 }
@@ -69,7 +74,12 @@ export function euclideanDistance(a: number[], b: number[]): number {
 
   let sum = 0;
   for (let i = 0; i < a.length; i++) {
-    const diff = a[i] - b[i];
+    const aVal = a[i];
+    const bVal = b[i];
+    if (aVal === undefined || bVal === undefined) {
+      throw new Error("Vectors contain undefined values");
+    }
+    const diff = aVal - bVal;
     sum += diff * diff;
   }
   return Math.sqrt(sum);
@@ -83,7 +93,13 @@ export function add(a: number[], b: number[]): number[] {
     throw new Error("Vectors must have the same dimension");
   }
 
-  return a.map((val, i) => val + b[i]);
+  return a.map((val, i) => {
+    const bVal = b[i];
+    if (bVal === undefined) {
+      throw new Error("Vector b contains undefined values");
+    }
+    return val + bVal;
+  });
 }
 
 /**
@@ -94,7 +110,13 @@ export function subtract(a: number[], b: number[]): number[] {
     throw new Error("Vectors must have the same dimension");
   }
 
-  return a.map((val, i) => val - b[i]);
+  return a.map((val, i) => {
+    const bVal = b[i];
+    if (bVal === undefined) {
+      throw new Error("Vector b contains undefined values");
+    }
+    return val - bVal;
+  });
 }
 
 /**
@@ -112,7 +134,11 @@ export function average(vectors: number[][]): number[] {
     throw new Error("Cannot average empty array of vectors");
   }
 
-  const dimension = vectors[0].length;
+  const firstVector = vectors[0];
+  if (!firstVector) {
+    throw new Error("Cannot average empty array of vectors");
+  }
+  const dimension = firstVector.length;
   const result: number[] = new Array(dimension).fill(0) as number[];
 
   for (const vector of vectors) {
@@ -120,7 +146,12 @@ export function average(vectors: number[][]): number[] {
       throw new Error("All vectors must have the same dimension");
     }
     for (let i = 0; i < dimension; i++) {
-      result[i] += vector[i];
+      const vecVal = vector[i];
+      const resVal = result[i];
+      if (vecVal === undefined || resVal === undefined) {
+        throw new Error("Vector contains undefined values");
+      }
+      result[i] = resVal + vecVal;
     }
   }
 

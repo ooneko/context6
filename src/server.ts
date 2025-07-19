@@ -63,6 +63,11 @@ export class LocalKnowledgeServer {
                 description: "Maximum number of results",
                 default: 10,
               },
+              mode: {
+                type: "string",
+                description: "Search mode: keyword, semantic, or hybrid",
+                enum: ["keyword", "semantic", "hybrid"],
+              },
             },
             required: ["query"],
           },
@@ -107,7 +112,11 @@ export class LocalKnowledgeServer {
         switch (name) {
           case "search":
             return await this.handleSearch(
-              args as { query: string; limit?: number },
+              args as {
+                query: string;
+                limit?: number;
+                mode?: "keyword" | "semantic" | "hybrid";
+              },
             );
 
           case "read_file":
@@ -123,13 +132,17 @@ export class LocalKnowledgeServer {
     );
   }
 
-  private async handleSearch(args: { query: string; limit?: number }): Promise<{
+  private async handleSearch(args: {
+    query: string;
+    limit?: number;
+    mode?: "keyword" | "semantic" | "hybrid";
+  }): Promise<{
     content: Array<{ type: string; text: string }>;
   }> {
     const searchOptions: SearchOptions = {
       query: args.query,
       limit: args.limit || 10,
-      mode: this.config.searchOptions.defaultMode,
+      mode: args.mode || this.config.searchOptions.defaultMode,
     };
 
     const results = await this.searchEngine.search(searchOptions);

@@ -58,7 +58,10 @@ export class OpenAIEmbeddingProvider extends BaseEmbeddingProvider {
         encoding_format: "float",
       });
 
-      const embedding = response.data[0].embedding;
+      const embedding = response.data[0]?.embedding;
+      if (!embedding) {
+        throw new Error("No embedding returned from OpenAI API");
+      }
       const tokens = response.usage?.total_tokens || 0;
 
       return {

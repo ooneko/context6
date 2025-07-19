@@ -3,6 +3,10 @@ export default {
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
   testMatch: ['**/*.test.ts'],
+  testPathIgnorePatterns: [
+    '<rootDir>/tests/manual/',
+    '<rootDir>/tests/fixtures/'
+  ],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
     '@xenova/transformers': '<rootDir>/__mocks__/@xenova/transformers.js'

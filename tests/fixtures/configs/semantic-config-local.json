@@ -1,0 +1,34 @@
+{
+  "knowledgePaths": [
+    "/Users/huabinhong/Code/bigcat/context7/test-knowledge"
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "*.tmp.md",
+    ".obsidian/**",
+    ".git/**",
+    "**/.DS_Store"
+  ],
+  "indexOptions": {
+    "maxFileSizeMb": 10,
+    "cacheEnabled": true,
+    "updateIntervalMs": 5000
+  },
+  "searchOptions": {
+    "maxResults": 20,
+    "contextLength": 200,
+    "fuzzyThreshold": 0.6,
+    "defaultMode": "semantic",
+    "semantic": {
+      "enabled": true,
+      "provider": "local",
+      "model": "Xenova/all-MiniLM-L6-v2",
+      "cacheEmbeddings": true,
+      "batchSize": 100
+    },
+    "hybrid": {
+      "keywordWeight": 0.7,
+      "semanticWeight": 0.3
+    }
+  }
+}

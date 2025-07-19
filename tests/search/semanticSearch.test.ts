@@ -81,7 +81,7 @@ describe("SemanticSearchEngine", () => {
             vector: new Array(384).fill(0.1),
             metadata: {
               id: "test_0",
-              filePath: "/test/file.md",
+              path: "/test/file.md",
               title: "Test File",
               chunkIndex: 0,
               startLine: 1,
@@ -241,7 +241,7 @@ describe("SemanticSearchEngine", () => {
             vector: new Array(384).fill(0.1),
             metadata: {
               id: "test_0",
-              filePath: "/test/file1.md",
+              path: "/test/file1.md",
               title: "File 1",
               chunkIndex: 0,
               startLine: 1,
@@ -256,7 +256,7 @@ describe("SemanticSearchEngine", () => {
             vector: new Array(384).fill(0.2),
             metadata: {
               id: "test_1",
-              filePath: "/test/file2.md",
+              path: "/test/file2.md",
               title: "File 2",
               chunkIndex: 0,
               startLine: 1,

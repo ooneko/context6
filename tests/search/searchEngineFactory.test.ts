@@ -1,6 +1,7 @@
 import { createSearchEngine, createSearchEngineForMode } from '../../src/search/searchEngineFactory.js';
 import { KeywordSearchEngine } from '../../src/search/keywordSearch.js';
 import { SemanticSearchEngine } from '../../src/search/semanticSearch.js';
+import { HybridSearchEngine } from '../../src/search/hybridSearch.js';
 import type { Config } from '../../src/types.js';
 import { getConfig } from '../../src/config.js';
 
@@ -58,10 +59,29 @@ describe('searchEngineFactory', () => {
       expect(engine).toBeInstanceOf(KeywordSearchEngine);
     });
 
-    it('should fallback to KeywordSearchEngine for hybrid mode', () => {
+    it('should create HybridSearchEngine when semantic is enabled', () => {
       config.searchOptions.defaultMode = 'hybrid';
+      config.searchOptions.semantic = {
+        enabled: true,
+        provider: 'local',
+        model: 'test-model',
+        cacheEmbeddings: false,
+        batchSize: 100,
+      };
       const engine = createSearchEngine(config);
-      expect(engine).toBeInstanceOf(KeywordSearchEngine);
+      expect(engine).toBeInstanceOf(HybridSearchEngine);
+    });
+
+    it('should throw error for hybrid mode when semantic is disabled', () => {
+      config.searchOptions.defaultMode = 'hybrid';
+      config.searchOptions.semantic = {
+        enabled: false,
+        provider: 'local',
+        model: 'test-model',
+        cacheEmbeddings: false,
+        batchSize: 100,
+      };
+      expect(() => createSearchEngine(config)).toThrow('Hybrid search mode requires semantic search to be enabled in configuration');
     });
 
     it('should throw error for unknown search mode', () => {

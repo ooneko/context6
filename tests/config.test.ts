@@ -57,7 +57,7 @@ describe('Config', () => {
       
       expect(merged.searchOptions.semantic?.enabled).toBe(true);
       expect(merged.searchOptions.semantic?.provider).toBe('openai');
-      expect(merged.searchOptions.semantic?.model).toBe('all-MiniLM-L6-v2'); // preserved
+      expect(merged.searchOptions.semantic?.model).toBe('shibing624/text2vec-base-chinese'); // preserved
     });
 
     it('should merge hybrid search options', () => {

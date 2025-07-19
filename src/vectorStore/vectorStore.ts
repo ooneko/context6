@@ -116,9 +116,14 @@ export abstract class BaseVectorStore implements IVectorStore {
     let normB = 0;
 
     for (let i = 0; i < a.length; i++) {
-      dotProduct += a[i] * b[i];
-      normA += a[i] * a[i];
-      normB += b[i] * b[i];
+      const aVal = a[i];
+      const bVal = b[i];
+      if (aVal === undefined || bVal === undefined) {
+        throw new Error("Vectors contain undefined values");
+      }
+      dotProduct += aVal * bVal;
+      normA += aVal * aVal;
+      normB += bVal * bVal;
     }
 
     normA = Math.sqrt(normA);

@@ -27,7 +27,7 @@ export const DEFAULT_CONFIG: Config = {
     semantic: {
       enabled: false,
       provider: "local",
-      model: "all-MiniLM-L6-v2",
+      model: "shibing624/text2vec-base-chinese",
       cacheEmbeddings: true,
       batchSize: 100,
     },

@@ -2,6 +2,7 @@ import type { Config, SearchMode } from "../types.js";
 import type { ISearchEngine } from "./searchEngine.js";
 import { KeywordSearchEngine } from "./keywordSearch.js";
 import { SemanticSearchEngine } from "./semanticSearch.js";
+import { HybridSearchEngine } from "./hybridSearch.js";
 
 export function createSearchEngine(config: Config): ISearchEngine {
   const mode = config.searchOptions.defaultMode;
@@ -19,9 +20,14 @@ export function createSearchEngine(config: Config): ISearchEngine {
       return new SemanticSearchEngine(config);
 
     case "hybrid":
-      // TODO: Implement HybridSearchEngine
-      // Fallback to keyword search until hybrid is implemented
-      return new KeywordSearchEngine();
+      // Check if semantic search is properly configured for hybrid mode
+      if (!config.searchOptions.semantic?.enabled) {
+        // Hybrid search requires semantic search to be enabled
+        throw new Error(
+          "Hybrid search mode requires semantic search to be enabled in configuration",
+        );
+      }
+      return new HybridSearchEngine(config);
 
     default:
       // This ensures exhaustive type checking

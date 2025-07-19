@@ -32,7 +32,7 @@ describe('LocalEmbeddingProvider', () => {
   describe('constructor', () => {
     it('should initialize with default model', () => {
       const defaultProvider = new LocalEmbeddingProvider({ model: '' });
-      expect(defaultProvider.getDimension()).toBe(384);
+      expect(defaultProvider.getDimension()).toBe(768); // Default is now text2vec-base-chinese
     });
 
     it('should set correct dimensions for known models', () => {
@@ -40,6 +40,7 @@ describe('LocalEmbeddingProvider', () => {
         ['Xenova/all-MiniLM-L6-v2', 384],
         ['Xenova/all-mpnet-base-v2', 768],
         ['Xenova/distiluse-base-multilingual-cased-v2', 512],
+        ['shibing624/text2vec-base-chinese', 768],
       ];
 
       for (const [model, expectedDim] of configs) {
@@ -142,7 +143,7 @@ describe('LocalEmbeddingProvider', () => {
       await provider.embed('test'); // Force initialization
       await provider.dispose();
       
-      // After disposal, isReady should still work but embedder is cleared
+      // After disposal, isReady should return true because it can re-initialize
       const ready = await provider.isReady();
       expect(ready).toBe(true); // Will re-initialize if called
     });

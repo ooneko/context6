@@ -21,11 +21,11 @@ npm run inspector  # Debug the server using MCP Inspector
 # Code quality
 npm run format     # Format code with Prettier
 npm run lint       # Lint with ESLint (strict TypeScript rules)
-npm run test       # Run Jest tests
 
-# Run a specific test
-npm test -- config.test.ts
-npm test -- --coverage  # Run with coverage report
+# Testing - see tests/README.md for complete guide
+npm run test       # Run all tests
+npm run test:watch # Watch mode for development
+npm run test:coverage # Generate coverage report
 ```
 
 ### Development Workflow
@@ -33,6 +33,9 @@ npm test -- --coverage  # Run with coverage report
 2. Ensure all tests pass with `npm run test`
 3. Use `npm run watch` during development for auto-compilation
 4. Debug with `npm run inspector` when testing MCP communication
+
+### Testing
+For comprehensive testing documentation, see [tests/README.md](tests/README.md)
 
 ## Architecture Overview
 
@@ -77,12 +80,13 @@ Claude Desktop → StdioTransport → LocalKnowledgeServer → Tool Handlers
    - Title extraction: frontmatter > first # heading > filename
    - Respects `.gitignore`-style patterns
 
-## Testing Strategy
+## Testing
 
-- **Unit Tests**: All services and components
-- **Integration Tests**: Document loading and search functionality
-- **Coverage Requirements**: 80% minimum for all metrics
-- **Test Location**: `tests/` directory mirrors `src/` structure
+See [tests/README.md](tests/README.md) for complete testing documentation including:
+- Test organization and structure
+- Running different types of tests
+- Writing new tests
+- Coverage requirements
 
 ## TypeScript Configuration
 

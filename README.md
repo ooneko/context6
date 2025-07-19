@@ -11,7 +11,7 @@
 ### 🔍 多种搜索模式
 - **关键词搜索**：传统的关键词匹配搜索
 - **语义搜索**：基于 AI 嵌入的语义理解搜索
-- **混合搜索**：结合关键词和语义搜索的优势（开发中）
+- **混合搜索**：结合关键词和语义搜索的优势
 
 ### 🧠 智能语义搜索
 - **多种嵌入提供者支持**：
@@ -38,7 +38,6 @@
 ```bash
 # 克隆项目
 git clone <repository-url>
-cd local-knowledge-mcp
 
 # 安装依赖
 npm install
@@ -137,6 +136,43 @@ npm run build
 }
 ```
 
+#### 混合搜索
+```json
+{
+  "searchOptions": {
+    "defaultMode": "hybrid",
+    "semantic": {
+      "enabled": true,
+      "provider": "local",
+      "model": "shibing624/text2vec-base-chinese"
+    },
+    "hybrid": {
+      "keywordWeight": 0.7,
+      "semanticWeight": 0.3
+    }
+  }
+}
+```
+
+#### 中文语义搜索
+
+本项目默认使用专门优化的中文嵌入模型 `shibing624/text2vec-base-chinese`，该模型：
+- 专门针对中文文本优化
+- 768 维度嵌入向量
+- 支持语义相似度计算
+- 适合中文知识库搜索
+
+如需使用其他模型，可在配置中指定：
+```json
+{
+  "searchOptions": {
+    "semantic": {
+      "model": "Xenova/paraphrase-multilingual-MiniLM-L12-v2"  // 多语言模型
+    }
+  }
+}
+```
+
 ## 使用方法
 
 ### 在 Claude Desktop 中使用
@@ -176,12 +212,12 @@ npm run inspector
 ## 🛠️ 可用工具
 
 ### search
-智能搜索本地 Markdown 文件中的内容。根据配置自动选择搜索模式（关键词或语义搜索）。
+智能搜索本地 Markdown 文件中的内容。根据配置自动选择搜索模式（关键词、语义或混合搜索）。
 
 **参数：**
 - `query` (必需): 搜索查询
 - `limit` (可选): 最大结果数，默认为 10
-- `mode` (可选): 搜索模式 (`"keyword"` | `"semantic"`)
+- `mode` (可选): 搜索模式 (`"keyword"` | `"semantic"` | `"hybrid"`)
 
 **示例：**
 ```javascript
@@ -190,6 +226,9 @@ await search({ query: "机器学习算法" });
 
 // 强制使用语义搜索
 await search({ query: "neural networks", mode: "semantic" });
+
+// 使用混合搜索（结合关键词和语义）
+await search({ query: "性能优化", mode: "hybrid" });
 
 // 限制结果数量
 await search({ query: "配置", limit: 5 });
@@ -255,7 +294,6 @@ await list_files({ directory: "~/Documents/notes" });
 ```bash
 # 克隆项目
 git clone <repository-url>
-cd local-knowledge-mcp
 
 # 安装依赖
 npm install
@@ -269,8 +307,11 @@ npm run watch
 # 构建项目
 npm run build
 
-# 运行测试
-npm test
+# 测试相关
+npm test            # 运行所有测试
+npm run test:watch  # 监视模式
+npm run test:coverage # 生成覆盖率报告
+npm run test:manual # 运行手动测试
 
 # 代码质量检查
 npm run lint        # ESLint 检查
@@ -279,6 +320,8 @@ npm run format      # Prettier 格式化
 # 调试 MCP 通信
 npm run inspector   # 使用 MCP Inspector 调试
 ```
+
+详细的测试文档请参见 [tests/README.md](tests/README.md)
 
 ### 添加新功能
 1. **添加新的 MCP 工具**：
@@ -296,7 +339,7 @@ npm run inspector   # 使用 MCP Inspector 调试
 
 ### 项目结构
 ```
-local-knowledge-mcp/
+/
 ├── src/                     # 源代码
 │   ├── index.ts            # CLI 入口，处理配置加载和服务器启动
 │   ├── server.ts           # MCP 服务器实现，使用 StdioTransport
@@ -360,34 +403,24 @@ Claude Desktop → StdioTransport → LocalKnowledgeServer → Tool Handlers
 - **内存优化**：智能的文档分块策略
 - **类型安全**：完整的 TypeScript 类型检查
 
-## 🧪 测试覆盖
+## 🧪 测试
 
-项目包含 **259 个测试用例**，覆盖：
-- 单元测试 - 所有核心组件
-- 集成测试 - 端到端搜索流程
-- 边缘情况测试 - 错误处理和边界条件
-- 性能测试 - 大规模文档处理
+项目包含全面的测试套件，确保代码质量和功能可靠性。
 
-### 测试命令
+### 测试覆盖
+- **单元测试** - 所有核心组件
+- **集成测试** - 端到端搜索流程
+- **手动测试** - 开发调试脚本
+- **覆盖率要求** - 80% 最低标准
+
+### 快速测试命令
 ```bash
-# 运行所有测试
-npm test
-
-# 运行测试并生成覆盖率报告
-npm test -- --coverage
-
-# 运行特定测试文件
-npm test -- semanticSearch.test.ts
+npm test              # 运行所有测试
+npm run test:watch    # 监视模式
+npm run test:coverage # 覆盖率报告
 ```
 
-### 核心功能测试结果
-- ✅ **服务器初始化** - MCP 服务器正确启动和配置
-- ✅ **关键词搜索** - 成功搜索文件内容和标题
-- ✅ **语义搜索** - 基于向量相似度的智能搜索
-- ✅ **文件列表** - 递归扫描和列出 Markdown 文件
-- ✅ **文件读取** - 读取文件内容和提取元数据
-- ✅ **配置管理** - 多层配置合并和验证
-- ✅ **错误处理** - 优雅处理各种异常情况
+完整的测试文档和指南请参见 [tests/README.md](tests/README.md)
 
 ## 🛣️ 开发路线图
 
@@ -398,9 +431,9 @@ npm test -- semanticSearch.test.ts
 - ✅ **语义搜索** - 基于 AI 嵌入的智能搜索
 - ✅ **多嵌入提供者** - 支持本地/OpenAI/Cohere
 - ✅ **向量缓存** - 嵌入向量持久化存储
+- ✅ **混合搜索** - 结合关键词和语义搜索优势
 
 ### 开发中功能
-- 🚧 **混合搜索** - 结合关键词和语义搜索优势
 - 🚧 **实时文件监控** - 自动更新索引
 
 ### 未来计划

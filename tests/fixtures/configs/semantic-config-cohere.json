@@ -1,0 +1,35 @@
+{
+  "knowledgePaths": [
+    "/Users/huabinhong/Code/bigcat/context7/test-knowledge"
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "*.tmp.md",
+    ".obsidian/**",
+    ".git/**",
+    "**/.DS_Store"
+  ],
+  "indexOptions": {
+    "maxFileSizeMb": 10,
+    "cacheEnabled": true,
+    "updateIntervalMs": 5000
+  },
+  "searchOptions": {
+    "maxResults": 20,
+    "contextLength": 200,
+    "fuzzyThreshold": 0.6,
+    "defaultMode": "semantic",
+    "semantic": {
+      "enabled": true,
+      "provider": "cohere",
+      "model": "embed-english-v3.0",
+      "apiKey": "YOUR_COHERE_API_KEY_HERE",
+      "cacheEmbeddings": true,
+      "batchSize": 100
+    },
+    "hybrid": {
+      "keywordWeight": 0.7,
+      "semanticWeight": 0.3
+    }
+  }
+}
